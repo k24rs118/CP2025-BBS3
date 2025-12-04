@@ -237,7 +237,7 @@ function cancelEdit(postId) {
     postElement.find('textarea').val('');
 }
 
-// 投稿の更新：バグ入りなので要修正（更新せずに削除してしまう）
+// 投稿の更新
 function updatePost(postId) {
     const contentVal = $(`#edit-${postId}`).val();
     if (!validateContent(contentVal)) return;
@@ -248,7 +248,7 @@ function updatePost(postId) {
         updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
-    postsRef.child(postId).update()
+    postsRef.child(postId).update(updates)
     .then(() => {
         showMessage('投稿を更新しました');
         $(`#post-${postId}`).removeClass('editing');
@@ -259,7 +259,7 @@ function updatePost(postId) {
     });
 }
 
-// 投稿の削除：バグ入りなので要修正（削除せずに本文を「削除されました」にして更新してしまう）
+// 投稿の削除
 function deletePost(postId) {
     if (!confirm('この投稿を削除してもよろしいですか？')) {
         return;
@@ -268,7 +268,7 @@ function deletePost(postId) {
     const postElement = $(`#post-${postId}`);
     postElement.addClass('deleting');
 
-    postsRef.child(postId).update({content: '削除されました'})
+    postsRef.child(postId).remove()
     .then(() => {
         showMessage('投稿を削除しました');
     })
